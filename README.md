@@ -1,1 +1,1 @@
-# NordicDSL
+# NordicDSL-lrec-submission

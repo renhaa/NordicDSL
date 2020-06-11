@@ -1,0 +1,37 @@
+\section{Conclusion}
+In this section I will sum up the results of the paper and provide some suggestions for further work.\\
+
+We have used the dimensionality reduction techniques PCA and t-SNE to make visualizations of feature vectors obtained by making a one-hot encoding with character bi-grams and with the two modes from FastText.\\
+
+These unsupervised techniques was able to separate the sentences from Wikipedia into different clusters.
+Without any prior knowledge about the actual language of each sentence these techniques indicated that the six languages can be divided into three main language categories: (1) Danish Nynorsk Bokmål (2) Faroese Icelandic and (3) Swedish.\\
+
+We then compared four different "classical" models: K nearest Neighbors, Logistic regression, Naive Bayes and a linear support vector machines with two neural network architectures: Multilayer perceptron and a convolutional neural network.\\
+
+Generally the supervised models had the largest errors when discriminating between languages belonging to either of the language groups mentioned above.\\
+
+For the "classical" models we saw that Logistic Regression and support vector machines achieved better performance than KNN and Naive Bayes, where the latter performed the worst. This was true in all cases irrespective of the method of feature extraction.\\
+
+Additionally we saw that when we used feature vectors from the FastText skipgram model the classification models achieved better results than when using either FastText cbow or character n-grams.\\
+
+Generally we saw that increasing the number of data points lead to better performance. When comparing the CNN with the "classical" models however the CNN performed better than any of the other models even when trained on less data points. In this way i seems that the CNN is able to learn more from less data when compared to the other models.\\
+
+We saw that when we tested the two best performing models, FastText supervised and CNN, on the dataset from Tatoeba the accuracies dropped quite a lot. We showed that using character n-grams as features instead of words increased the performance for the FastText supervised classifier. By also training FastText on the Tatoeba dataset as well as the Wikipedia dataset resulted in an additional increase in performance.
+
+
+\subsection{Ideas for improvements}
+Here I will provide a couple of ideas for extensions of the work presented in this paper.
+\begin{itemize}
+  \item \textbf{Hyper parameter optimization:}
+  Especially for the neural networks it could be interesting to see if additional tuning of the hyper parameters could result in better performance. One obvious extension would be to try and stacking convolutional layers on top of each other. I briefly looked at this but did not manage to make a rigorous investigation as the training time increased substantially when adding more layers.
+  \item \textbf{Implement a two step classification approach.}
+  The paper "Discriminating Similar Languages:
+  Evaluations and Explorations" \cite{DSLEvaluation} mentions that in the 2014 edition of the DSL competition, the best result achieved an accuracy of 95.7\%. The winning team used a two step approach where their algorithm first classified the language group an then the actual language. The team used a linear support vector machines with words and characters as features.\\
+  Inspired by this result I propose to construct a classification algorithm which first discriminates between the major language groups before making a prediction about the actual language with a dedicated classifier. In this way one could treat discriminating between Danish and Bokmål or Faroese and Icelandic as a binary classification problem and see if performance would increase.\\
+\end{itemize}
+
+
+
+
+%
+% \textbf{Training times}: A major hurdle during the project was the long training times for the different models. Especially the neural networks took several hours to train

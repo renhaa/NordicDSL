@@ -1,0 +1,52 @@
+# Build an example competition
+---
+title: Example Competition
+description: This is a competition to test the competition bundle system. It should be able to create a competition from this bundle.
+image: logo.jpg
+has_registration: True
+end_date: 
+html: 
+    overview: overview.html
+    evaluation: evaluation.html
+    terms: terms_and_conditions.html
+    data: data.html
+phases:
+    1:
+        phasenumber: 1
+        label: "Development"
+        start_date: 2013-06-30
+        max_submissions: 100
+        is_scoring_only: False
+        scoring_program: program.zip
+        reference_data: reference.zip
+        public_data: dataset.zip
+        starting_kit: submission.zip
+    2:
+        phasenumber: 2
+        label: "Feed-back"
+        start_date: 2013-08-30
+        max_submissions: 3
+        is_scoring_only: False
+        scoring_program: program.zip
+        reference_data: reference.zip
+        input_data: dataset.zip
+    3:
+        phasenumber: 3
+        label: "Final test"
+        start_date: 2013-09-30
+        max_submissions: 3
+        is_scoring_only: False
+        scoring_program: program.zip
+        reference_data: reference.zip
+        input_data: dataset.zip
+
+leaderboard:
+    leaderboards:
+        Results: &RESULTS
+            label: Results
+            rank: 1
+    columns:
+        Difference:
+            leaderboard: *RESULTS
+            label: Difference
+            numeric_format: 6
