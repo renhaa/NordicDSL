@@ -1,7 +1,7 @@
 import os
 import argparse
 import pandas as pd 
-import fastText
+import fasttext
 import glob
 
 def prepare_data_for_fasttext(data):
@@ -21,7 +21,7 @@ def train_fasttext_model(args):
     data = pd.read_csv(trainfile)
     prepare_data_for_fasttext(data) 
 
-    fastTextmodel = fastText.train_supervised("fasttext.tmp",
+    fastTextmodel = fasttext.train_supervised("fasttext.tmp",
                                               dim=args.dim,
                                               ws=args.ws,
                                               wordNgrams=args.wordNgrams,
