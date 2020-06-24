@@ -6,8 +6,8 @@ import glob
 
 def prepare_data_for_fasttext(data):
 
-    for x, y in zip(data["language"], data["sentence"]):
-        line = "__langid__" + y + " " + x
+    for lang, text in zip(data["language"], data["sentence"]):
+        line = "__langid__" + lang + " " + text
         with open("fasttext.tmp", "a+") as f:
             f.write(line + "\n")
 
