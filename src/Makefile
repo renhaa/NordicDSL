@@ -1,4 +1,4 @@
-all: requirements preprocess train_fasttest_supervised
+all: requirements download_data preprocess train_fasttest_supervised
 
 requirements: 
 	pip3 install -r requirements.txt 
