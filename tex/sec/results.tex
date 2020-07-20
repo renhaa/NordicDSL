@@ -1,207 +1,141 @@
+\section{Experiments}\label{sec:results}
 
-\begin{table}
-  \centering
-  \begin{tabular}{ l | c | r }
-    \hline
-    Model               & Encoding  & Accuracy \\
-    \hline
-    MLP                 & char bi-gram &  0.898 \\
-    CNN                 & char bi-gram & \textbf{0.956} \\
-    % LSTM                & char bi-gram & 60k & 0.933 \\
-    MLP                 & char uni-gram &  0.697\\
-    CNN                 & char uni-gram  & 0.942 \\
-    % LSTM                & char uni-gram & 60k &  \\
-    \hline
-  \end{tabular}
-  \caption{Overview of results for the neural network models for the data set with 10K data points in each language.}
-  \label{keras-results}
-\end{table}
+In the following in Sec.~\ref{sec:data} we first describe the database, which we used to create different tensor models proposed in Sec.~\ref{sec:tensormodel}. 
+Based on these, we present substructures which we found in the auxiliary latent space in Sec.~\ref{sec:subspace}. 
+A qualitative comparison of the reconstruction quality of the two different versions of the tensor model is presented in  Sec.~\ref{sec:extmodel}. 
+We proceed to quantitatively evaluate the effect of varying regularisation parameters on approximation and transfer in Sec.~\ref{sec:validation}, and then apply these findings by a qualitative results presented in Sec.~\ref{sec:approx}. 
 
-\section{Results}
+\subsection{Facial Expression Database} \label{sec:data}
+In this work, we use the Binghamton University 3D Facial Expression database (BU-3DFE)\cite{bu3dfe}. 
+It contains 3D face scans and images of 100 persons (56 female and 44  male), with varying age (18-70 years) and diverse ethnic/races. 
+Each subject was asked to perform the six basis emotions: anger, disgust, happiness, fear, sadness, and surprise, each with four levels of increasing expression strength. 
+Additionally, for each participant the neutral face was recorded.
+Hence, a total of 25 facial expressions is provided, recorded from two different rotations, %($\pm \pi/4$ from frontal)
+i.e. left and right rotations, from which an additional morphed frontal image is provided.
+% Maybe something this these?
+% \input{tex/fig/Fig3/fig3.tex}
 
-\subsection{Results with neural networks}
-In the following we evaluate the initial results for the neural network architectures which can be seen in Table~\ref{keras-results}. Here we compare the result of doing character level uni- and bi-grams using the Multilayer Perceptron and Convolutional Neural Network. We see that the CNN performs the best, achieving an accuracy of 95.6\% when using character bi-grams. Both models perform better using bi-grams than individual characters as features while the relative increase in performance is greater for the MLP model.
+%\subsection{Subspace Analysis}
+\subsection{Subspace Analysis of the Auxiliary Latent Space}
+\label{sec:subspace}
+% Sec.~\ref{sec:latent_space_embedding} describes how the face images of the BU3D-FE database can be embedded into the latent space of the StyleGAN1 and 2. The resulting latent vectors are then ordered into a data tensor, which is factorised by a HOSVD, as described in  Eq.~\ref{eq:matrix_hosvd}, leading to three different subspaces, represented by the matrices $\matr{U}_k$. 
+The BU-3DFE database offers 7500 face images, see Sec.~\ref{sec:data}, %of 100 persons in 25 expressions, i.e. the 6 basic emotions in 4 intensity levels and neural, see Sec.~\ref{sec:data}.
+which we embed into the latent space of StyleGAN1 and 2, as described in Sec.~\ref{sec:stylegan}, hence for each face image one latent vector is obtained. 
+The resulting latent vectors are ordered into a 4way data tensor $T\in\R^{N\times P\times E \times R}$. %where $N$ is the number of elements of one latent vector, $P$ refers to 100 persons and $E$ are the 25 expressions. 
+The 4-way data tensor is then factorised by the HOSVD, as described in \eqref{eq:matrix_hosvd} leading to four different subspaces %spanned by the columns of the associated orthogonal matrices
+$\matr{U}_k$, $k=1,\ldots,4$. % reflecting the different dimensions of the data tensor. 
+The first three dimensions of the expression subspace spanned by the columns of $\matr{U}_3$ are visualised in Fig.~\ref{fig:apathy_vs_neutral}\subref{subfig:subspaces}. 
+It can be seen that the for each emotion, the four points of different varying expression strengths form linear trajectories, which intersect a new expression, which does not equal the neutral expression, nor the mean face. 
+These three expressions were synthesised for the mean person and are illustrated in Fig.~\ref{fig:apathy_vs_neutral}. 
+It can be seen that the mouth in the mean and the neutral expression is open and looks rather happy, whereas the mouth is closed in the newly synthesised  expression, hence we labelled it as \emph{apathetic} as in \cite{apathy,grasshof2020}. 
+This confirms the findings from \cite{apathy,grasshof2020} based on the same database and others. 
+Similarly, we utilise the structure found in the subspace by employing reasonable constraints for the optimisation procedure and hence improve the results for for new inputs, which we show in Sec.~\ref{sec:approx}. 
 
-
-\subsection{Increasing the size of the data set}
-Usually the performance of supervised classification models increase with more training data. To measure this effect we increase the amount of training data to 50K sentences in each of the language categories. Due to much longer training times only the "baseline models" are included with the skip-gram encoding from FastText which we saw achieved the highest accuracy. 
-
-\begin{table}
-  \centering
-  \begin{tabular}{ l  c | r }
-    \hline
-    Model               & Encoding & Accuracy \\
-    \hline
-    Knn                 & skipgram & 0.931\\
-    Logistic Regression & skipgram  & \textbf{0.933}\\
-    Naive Bayes         & skipgram  & 0.806\\
-    SVM                 & skipgram& 0.925\\
-    \hline
-  \end{tabular}
-  \caption{Overview of results for the data set with 50K data points in each language.}
-  \label{results-sklearn300k}
-\end{table}
+%based on data of 3D faces from the same database and an additional 2D database.
+% To visualise the differences between the three expressions, each of them was synthesised and is illustrated in Fig.~\ref{fig:apathy_vs_neutral} on the mean person. It can be seen that the mouth in the mean and the neutral expression is open and looks rather happy, whereas the mouth is closed in the apathetic expression. 
+%This shows that there is a structure in the subspaces, which we enforce to stick to by constrained optimisation described in Sec.~\ref{sec:optimisation} for new inputs. 
+%  labelled as \emph{apathetic}. 
+%%%%%
+%It can be seen that the four points describing different expression strengths for each emotion (visualised in different colors) form trajectories and that these intersect in a new expression, which does not equal the neutral expression, nor the mean face, labelled as \emph{apathetic}. 
+% % % FIGURE 5
+\input{fig/Fig5/fig5.tex}
 
 
-\begin{table}
-  \centering
-  \begin{tabular}{ l c | r }
-    \hline
-    Model               & Encoding & Accuracy \\
-    \hline
-    MLP                 & char bi-gram  & 0.918\\
-    CNN                 & char bi-gram  & \textbf{0.970}\\
-    \hline
-  \end{tabular}
-  \caption{Overview of results for the data set with 50K data points in each language.}
-  \label{results-keras-300k}
-\end{table}
+%\subsection{Vectorised vs. Extended Model}
+\subsection{Vectorised vs. Stacked Style-Separated Model Model}
+\label{sec:extmodel}
 
-Table~\ref{results-sklearn300k} show that the accuracies for the logistic regression model and the K nearest neighbors algorithm improved slightly by including more data. Unexpectedly, performance of the support vector machine and naive Bayes dropped a bit with extra data.
+On the basis of the auxiliary latent space, we proposed to build two different versions of tensor models in Sec.~\ref{sec:tensormodel}. Both are based on a factorisation of different data tensors: 
 
-Even when including five times the amount of data the best result, logistic regression with an accuracy of 93.3\%, is still worse than for the Convolutional Neural Network trained on 10K data points in each language.
+(1) The \emph{vectorised model} which vectorises each latent code of one image and then orders them into a data tensor $T\in\R^{N\times P\times E\times R}$, and 
 
-In Table~\ref{results-keras-300k} we see the results for running the neural networks on the larger data set. Both models improve by increasing the amount of data and the Convolutional Neural Network reached an accuracy of 97\% which is the best so far.
+(2) the \emph{stacked style-separated model} $T_\text{style}\in\R^{S\times L\times P\times E\times R}$ which considers the $S=18$ styles of StyleGAN separately, and hence is based on $S$ style-specific tensors $T_s\in\R^{L\times P\times E\times R}$, $s=1,\ldots, S$, see Sec.~\ref{sec:extended_model}. 
 
+In this section we compare the results obtained by the two models, each using the ALS procedure \eqref{eq:als} for optimisation. 
+%we proposed to either build one tensor model $T$ $T^{(i)}$
+%different models were proposed. 
+%Fig.~\ref{fig:vec_vs_extended_model}
+The results are illustrated in Fig.~\ref{fig:fig7}. It can be seen that the input images shown in Fig.~\ref{fig:fig7}\subref{subfig:reference}, are visually matched better by the \emph{stacked style-separated model}, presented in Fig.~\ref{fig:fig7}\subref{subfig:extended}, as compared to the results of the \emph{vectorised model} shown in Fig.~\ref{fig:fig7}\subref{subfig:vectorised}. This observation holds for test data samples of BU-3DFE shown in the top row, as well as for arbitrary examples shown in 2nd and 3rd row. 
+Therefore, we conclude that the proposed adaptation considering the separate styles, improves the performance. 
 
-\begin{figure}
-  \centering
-  \includegraphics[scale=0.5]{figs/confusion_CNN}
-  \caption{Confusion matrix with results from the convolutional neural network on the full data set with 50K data points in each language.}
-  \label{confusion_matrix-big-cnn}
-\end{figure}
+\input{fig/Fig7/fig7.tex}
 
-\begin{figure}
-  \centering
-  \includegraphics[scale=0.5]{figs/fasttext_supervised}
-  \caption{Confusion matrix with results from a supervised FastText model on the full data set with 300K data points.}
-  \label{fasttext_supervised}
-\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Validation of Regularisation Parameters}
+\label{sec:validation}
 
-\begin{figure}
-    \centering
-    \begin{subfigure}[b]{0.45\textwidth}
-      \includegraphics[scale=0.5]{figs/tatoebasentprlang}
-      \caption{Distribution of the number of sentences in each language in the Tatoeba data set.}
-      \label{tatoebasentprlang}
-    \end{subfigure}
-    ~
-    \begin{subfigure}[b]{0.45\textwidth}
-      \includegraphics[scale=0.5]{figs/taboeba-faliurelengthdist}
-      \caption{Distribution of the length of sentences in the Tatoeba data set.}
-      \label{tatoebalengths}
-    \end{subfigure}
-    \caption{Distribution of the lengths and language classes of Tatoeba sentences.}
-\end{figure}
+The optimisation problem defined in \eqref{eq:lagrangian} contains two hyper parameters: $\lambda_1$ and  $\lambda_2$, which must be manually set.
+%\eqref{eq:optimisation_problem} 
+%The proposed optimisation procedures contain hyper parameters, which need to be manually set. 
+In this section we investigate how they influence the quality of the results using the previously defined \emph{vectorised model} on the basis of the standardised latent codes, i.e. $T\in\R^{N\times P\times E\times R}$ in \eqref{eq:matrix_model}. 
+%, based on the \eqref{eq:lagrangian}. 
 
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.5]{figs/fasttextcharngram}
-    \caption{Confusion matrix for FastText trained using only character level n-grams on the Wikipedia data set and evaluated on the Tatoeba data set.}
-    \label{fasttextcharngram}
-\end{figure}
+First, we separate the data tensor into  training, validation and test set by a randomised 90/5/5 over the $P=100$ person identities. As a result, the validation set has a total of $5E R=5\cdot25\cdot3=375$ samples. 
+We build one tensor model based on the training set. 
 
-\begin{figure}
-    \begin{subfigure}[b]{0.45\textwidth}
-      \includegraphics[scale=0.5]{figs/retrain}
-      \caption{Confusion matrix for FastText trained using only character level n-grams on the combined Wikipedia/Tatoeba data set and evaluated on the Tatoeba data set.}
-      \label{retrain-confuss}
-    \end{subfigure}
-    ~
-    \begin{subfigure}[b]{0.45\textwidth}
-        \includegraphics[scale=0.5]{figs/faliurelengthdist_tatoeba}
-        \caption{Distribution of sentence lengths Tatoeba test set along with the mis-classified sentences.}
-     \label{retrain-lengths}
-    \end{subfigure}
-    \caption{Error analyses.}
-\end{figure}
+%intro
+Then for each sample of the validation set $\vec{y}_i\in\mathcal{W}$ we estimate the parameter tensor $\widehat{Q}_i$ by ALS in \eqref{eq:als}, which estimates the  parameter tensor  $\widehat{Q} = \widehat{\vec{q}}_\text{person} \otimes \widehat{\vec{q}}_\text{expression} \otimes \widehat{\vec{q}}_\text{rotation}$. The input sample is then approximated by $\widehat{\vec{y}}_i = \tau(\widehat{Q}_i)$ as in \eqref{eq:taugam}. 
+%reconstruction
+We define the approximation error between true $\vec{y}$ and estimated auxiliary latent code $\widehat{\vec{y}}_i$ as $\epsilon_\text{approx} =\epsilon(\widehat{\vec{y}},\vec{y})$ where the error metric is defined as
+$\epsilon(\widehat{\vec{y}},\vec{y}) \equiv  \norm{\widehat{\vec{y}}-\vec{y}}^2$. 
+%expression transfer
+Additionally, we evaluate the transfer errors resulting from exchanging estimated parameters $\hat{\vec{q}}_k$ by known values $\tilde{\vec{q}}_k$. Hence using $\widetilde{\vec{y}}_\text{expr} \equiv \tau(\widehat{\vec{q}}_{\text{person}} \otimes \widetilde{\vec{q}}_{\text{expr}}\otimes \widehat{\vec{q}}_{\text{rot}})$ give rise to an expression transfer error which we define as $\epsilon_\text{expr}\equiv\epsilon(\widetilde{\vec{y}}_\text{expr},\vec{y})$. 
+%rotation transfer
+Analogously, we define a rotation transfer error $\epsilon_\text{rot} \equiv \epsilon(\widetilde{\vec{y}}_\text{rot},\vec{y})$ by calculating error arising from only changing the rotation part of the parameter tensor: $\widetilde{\vec{y}}_\text{rot} \equiv \tau(\widehat{\vec{q}}_{\text{person}}\otimes\widehat{\vec{q}}_{\text{expr}}\otimes\widetilde{\vec{q}}_{\text{rot}})$.
+
+The three error metrics $\epsilon_\text{approx}$ $\epsilon_\text{expr}$, and $\epsilon_\text{rot}$ are calculated, for each sample, with varying hyper parameter values $\lambda_1$ and $\lambda_2$. Then the mean over all the sample-wise errors is computed, leading to $\overline{\epsilon}_{\cdot}$. 
+The results are illustrated in Fig.~\ref{fig:hyper_param_errors}, where from top to bottom the mean errors are presented for: approximation error, expression transfer, and rotation transfer. 
+In general it can be seen that the approximation error does not fluctuate as much as the other two error metrics. 
+Fig.~\ref{fig:hyper_param_errors}\subref{subfig:l1penalty} indicates that high values of $\lambda_1$ should be chosen for rotation transfer, while for expression transfer $\lambda_1\approx 1$ seems to be a reasonable choice. 
+Fig.~\ref{fig:hyper_param_errors}\subref{subfig:l2penalty} reveals that for $\lambda_2 \approx 1$ all error metrics are small, and hence this interval is a good choice for multiple usages. 
+In the following section we use these findings by selecting specific parameter weights, and then perform expression and rotation transfer on samples the test set. 
+\input{fig/Fig8/fig8_overlay.tex}
+\subsection{Regularisation and Parameter Transfer}
+\label{sec:approx}
+In the previous section Sec.~\ref{sec:validation} quantitative results on expression and rotation transfer were presented, with respect to varying hyper parameters. 
+%Here we pr
+% In this section we show that the tensor model proposed in Sec.~\ref{sec:tensormodel} can be used to approximate unseen samples by employing the optimisation procedures described in Sec.~\ref{sec:optimisation}. 
+In this section we estimate the parameters $\widehat{Q}$ for an unknown image $\vec{x}$ of the test set. We can retrieve an image from the estimated parameters by applying the composed transformation $\vec{x}\approx\widehat{\vec{x}}= g(\tau(\widehat{Q}))$. 
+Additionally, we perform expression and rotation transfer by replacing one of the three estimated parameter vectors by known values, as described before. 
+We do this for the regularised model, i.e. $\lambda_1>0,~\lambda_2>0$, and the non-regularised model, by choosing $\lambda_1=\lambda_2=0$. 
+In Fig.~\ref{fig:fig9} the top row shows how well the ground truth (GT) presented in Fig.~\ref{fig:fig9}(a) can be approximated by Fig.~\ref{fig:fig9}(b) the non-regularised solution and Fig.~\ref{fig:fig9}(c) the regularised solution. When comparing them it seems that the non-regularised solution matches the GT slightly better. 
+This statement also holds for the expression transfer shown in Fig.~\ref{fig:fig9}(b). 
+However comparing the rotation transfer Fig.~\ref{fig:fig9}(c) shows that the regularised solution (bottom row) clearly outperforms the non-regularised solution (top row). Because in the non-regularised solution the resulting image is not recognisable as a face anymore at all, while the regularised solution is not deformed and the rotation of the depicted faces conform to the GT.
+\input{fig/Fig9/fig9.tex}
 
 
-% In Figure \ref{training} we see a plot of the accuracy during training on the training and validation set respectively. We see that the accuracy on the validation set follows the accuracy on the training set more closely for the CNN than for the MLP.
+% \begin{align}
+%\frac{1}{N}\norm{\vec{y}-\vec{y}}^2   
+% \epsilon_\text{approx} &=\epsilon(\widehat{\vec{y}},\vec{y}),\\
+% \intertext{where the error metric is defined as}
+% \epsilon(\widehat{\vec{y}},\vec{y}) &\equiv  \norm{\widehat{\vec{y}}-\vec{y}}^2. %\equiv \tensor{R}{_{\mu}} \tensor{R}{^{\mu}} 
+%\intertext{is the error metric.}
+%\vec{\vec{y}}&= f(\widehat{\vec{q}}_\text{person},\widehat{\vec{q}}_\text{expression},\widehat{\vec{q}}_\text{rotation})\\
+% \end{align}
+%is the approximated face image. 
+%$\frac{1}{N}\norm{\vec{y}-\vec{y}}^2$ 
+%$\hat{\vec{q}}_i \to \tilde{\vec{q}}_i$, i.e. for 
+% \begin{align}
+% \epsilon_\text{expr}&\equiv\epsilon(\widetilde{\vec{y}}_\text{expr},\vec{y}),\\
+% %\widetilde{\vec{y}}_\text{expr} &\equiv \tau(\widehat{\vec{q}}_{\text{person}},\widetilde{\vec{q}}_{\text{expr}},\widehat{\vec{q}}_{\text{rot}}), \\
+% \intertext{and with $\widetilde{\vec{y}}_\text{rot} \equiv \tau(\widehat{\vec{q}}_{\text{person}},\widehat{\vec{q}}_{\text{expr}},\widetilde{\vec{q}}_{\text{rot}})$ the rotation transfer error as}
+% \epsilon_\text{rot}&\equiv\epsilon(\widetilde{\vec{y}}_\text{rot},\vec{y}).%\\
+% %\widetilde{\vec{y}}_\text{rot} &\equiv \tau(\widehat{\vec{q}}_{\text{person}},\widehat{\vec{q}}_{\text{expr}},\widetilde{\vec{q}}_{\text{rot}}).
+% \end{align}
 
-% \begin{figure}[h!]
-%     \centering
-%     \begin{subfigure}[b]{200pt}
-%         \includegraphics[scale=0.5]{figs/training_MLP}
-%         \caption{Training accuracy MLP}
-%     \end{subfigure}
-%     ~
-%     \begin{subfigure}[b]{200pt}
-%         \includegraphics[scale=0.5]{figs/training_CNN}
-%         \caption{Training accuracy CNN}
-%     \end{subfigure}
-%     \caption{Accuracy on test and validation set during training of the different neural networks on the full data set with 50K data points in each language.}
-%     \label{training}
-% \end{figure}
-
-In Figure~\ref{confusion_matrix-big-cnn} we see the confusion matrix for the convolutional Neural Network trained on the full Wikipedia data set with 300K data points pr language. We see that the largest classification errors still happens between Danish, Bokmål and Nynorsk as well as between Icelandic and Faroese. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
-\subsection{Using FastText supervised}
+%we present qualitative results on the basis of the test set.
+%, such that for each hyper parameter value exactly one value for each error metric remains, which can then be represented by lines. 
+% In Fig.~\ref{fig:hyper_param_errors}\subref{subfig:l1penalty} the $x$-axis refers to the hyper parameter $\lambda_1$, which weights the L1 penalty, while in Fig.~\ref{fig:hyper_param_errors}\subref{subfig:l2penalty} the $x$-axis refers to $\lambda_2$, which weights the L2 penalty. 
 
-FastText can also be used for be trained supervised and be used for Classification. In the Paper Bag of Tricks for Efficient Text Classification \cite{BagOfTricks} the authors show that FastText can obtain performance on par with methods inspired by deep learning, while being much faster on a selection of different tasks in Tag prediction and Sentiment Analysis. The confusion matrix from running the FastText supervised classifier can be seen in Figure \ref{fasttext_supervised}. We see that FastText is roughly on par with the CNN.
-
-\subsection{Evaluating the models on another data set}
-It would be interesting to see how the two best performing models generalize by testing on a data set different from the they have been trained on (the Wikipedia data set).
-
-We downloaded an additional data set from Tatoeba\footnote{{\tt tatoeba.org/}} which is a large database of user provided sentences and translations. In Figure \ref{tatoebasentprlang} we see the number of sentences in each language for all sentences in the Tatoeba data set. Observe that we have very few samples in Nynorsk and Faroese.
-
-The language used in the Tatoeba data set is different from the language used in Wikipedia. The Tatoeba data set mainly consists of sentences written in everyday language. Below we see some examples from the Danish part of the Tatoeba data set.
-\begin{verbatim}
-Hvordan har du det?
-
-På trods af al sin rigdom
-og berømmelse, er han ulykkelig.
-
-Vi fløj over Atlanterhavet.
-
-Jeg kan ikke lide æg.
-
-Folk som ikke synes at latin er det
-smukkeste sprog, har intet forstået.
-\end{verbatim}
-
-% The confusion matrix for the FastText supervised model and the CNN, which are both trained on the full Wikipedia data set and then evaluated on the Tatoeba data set can be seen in Figure \ref{tatoeba-confuss}. Both models use the same setting that produced good results on the Wikipedia data set.
-
-% \begin{figure}[h!]
-%     \centering
-%     \begin{subfigure}[b]{0.45\textwidth}
-%         \includegraphics[scale=0.5]{figs/tatoeba-langid}
-%         \caption{Langid.py}
-%     \end{subfigure}
-%     ~
-%     \begin{subfigure}[b]{0.45\textwidth}
-%         \includegraphics[scale=0.5]{figs/tatoeba-fasttext}
-%         \caption{fasttext classifier }
-%     \end{subfigure}
-%     ~
-%     \begin{subfigure}[b]{0.45\textwidth}
-%         \includegraphics[scale=0.5]{figs/tatoeba-cnn}
-%         \caption{Convolutional neural network}
-%     \end{subfigure}
-%     \caption{Confusion matrices for the tatoeba data set }
-%     \label{tatoeba-confuss}
-% \end{figure}
-
-We see that the performance drops quite a lot when shifting to another domain. For reference the accuracy of langid.py on this data set is 80.9\% so FastText actually performs worse than the baseline with an accuracy of 75.5\% while the CNN is a bit better than the baseline with an accuracy of 83.8 \% 
-
-One explanation for the drop in performance is that the sentences in the Tatoeba data set is significantly shorter than the sentences in the Wikipedia data set as seen in Figure~\ref{tatoebalengths}. As we saw in the previous section both models tend to mis-classify shorter sentences more often than longer sentences. This and the fact that the "genre" of sentences are different might explain why the models trained on the Wikipedia data set does not generalize too well to the Tatoeba data set without a drop on performance.
-
-The CNN uses character bi-grams as features while, with the standard settings, FastText uses only individual words to train. The better performance of the CNN might indicate that character level n-grams are more useful features for language identification than words alone.
-
-To test this we changed the setting of FastText to train using only character level n-grams in the range 1-5 instead of individual words. In Figure \ref{fasttextcharngram} we see the confusion matrix for this version of the FastText model. This version still achieved 97.8\% on the Wikipedia test set while improving the accuracy on the Tatoeba data set from 75.4\% to 85.8\% which is a substantial increase.
-
-Thus using character level features seem to improve the FastText models ability to generalize to sentences belonging to a domain different from the one it has been trained on.\\
-
-
-\subsection{Retraining on the combined data set}
-To improve the accuracy over the Tatoeba data set we retrained the FastText model on a combined data set consisting of data points from
-both the Wikipedia and Tatoeba data set.
-
-The FastText model achieved an accuracy of 97.2\% on this combined data set and an accuracy of 93.2\% when evaluating this model on the Tatoeba test set alone - the confusion matrix can be seen in Figure \ref{retrain-confuss}.
-
-As was the case with the Wikipedia data set the mis-classified sentences tend to be shorter than the average sentence in the data set. In Figure \ref{retrain-lengths} we see the distribution of sentence lengths for the Tatoeba test set along with the mis-classified sentences.
-
-In the Tatoeba test set the mean length of sentences is 37.66 characters with a standard deviation of 17.91 while the mean length is only 29.70 characters for the mis-classified sentences with a standard deviation of 9.65. This again supports the conclusion that shorter sentences are harder to classify.
-
+%
+% \begin{align}
+% P_\text{expr,transfer} = (\widehat{\vec{q}}_{\text{person}}\otimes\widetilde{\vec{q}}_{\text{expr}}\otimes\widehat{\vec{q}}_{\text{rot}})
+% \end{align}
+% \begin{align}
+%     \widetilde{Y}_\text{e} = S(\widehat{\vec{q}}_{\text{person}}\otimes\widetilde{\vec{q}}_{\text{expr}}\otimes\widehat{\vec{q}}_{\text{rot}})
+% \end{align}
+%

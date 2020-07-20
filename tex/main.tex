@@ -1,61 +1,62 @@
-\documentclass[10pt, a4paper]{article}
+\documentclass[10pt]{article}
+\usepackage[margin=1in]{geometry}
 
-
-
-\usepackage{lrec}
-%\usepackage{multibib}
-%\newcites{languageresource}{Language Resources}
-\usepackage{graphicx}
-\usepackage{tabularx}
-\usepackage{soul}
-% for eps graphics
+\usepackage{graphicx}  
+\usepackage{float}  
+% \usepackage{pdfpages}
 \usepackage{subcaption}
-
+\newsavebox{\largestimage}
+\usepackage{hyperref}       % hyperlinks
+\usepackage{url}            % simple URL typesetting
+\usepackage{booktabs}       % professional-quality tables
 \usepackage{amsmath}
+\usepackage{amssymb}      
+\usepackage{nicefrac}       % compact symbols for 1/2, etc.
+\usepackage{microtype}      % microtypography
+\usepackage{lmodern}
 
-\usepackage[T1]{fontenc}
+\usepackage{bm}
+\usepackage{tensor}
 
-\usepackage{epstopdf}
-%\usepackage[latin1]{inputenc}
-\usepackage[utf8]{inputenc} %% Render certain characters correct.
-\usepackage{hyperref}
-\usepackage{xstring}
-
-\newcommand{\secref}[1]{\StrSubstitute{\getrefnumber{#1}}{.}{ }}
-
-\title{Discriminating Between Similar Nordic Languages}
-
-\name{René Haas, Leon Derczynski}
-
-\address{IT University of Copenhagen \\
-         \{renha, leod \}@itu.dk\\}
+\usepackage{tikz}
+\usetikzlibrary{positioning,shapes.multipart,decorations,decorations.pathreplacing,angles,quotes,fit}
 
 
-\abstract{Automatic language identification is a challenging problem and especially discriminating between closely related languages is one of the main bottlenecks of state-of-the-art language identification systems. This paper presents a machine learning approach for automatic language identification for the Nordic languages, which often suffer miscategorisation by existing state-of-the-art tools. Concretely we will focus on discrimination between the six Nordic languages: Danish, Swedish, Norwegian (Nynorsk), Norwegian (Bokmål), Faroese and Icelandic.
-\\ 
-\newline \Keywords{DSL, NLP, Language Identification, Machine Learning} }
+%% Notation set 
+\newcommand\R{\mathbb{R}}
+\newcommand\norm[1]{\left\lVert#1\right\rVert}
+\renewcommand{\norm}[1]{\ensuremath{\left|\left|#1\right|\right|}}
+\newcommand{\onenorm}[1]{\ensuremath{\left|#1\right|_1}}
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\matr}[1]{\mathbf{#1}}
+\newcommand{\tens}[1]{\ensuremath{\mathcal{#1}}}
+% \renewcommand{\tilde}[1]{\ensuremath{\widetilde{#1}}}
+% \renewcommand{\hat}[1]{\ensuremath{\widehat{#1}}}
+% \renewcommand{\bar}[1]{\ensuremath{\widebar{#1}}}
+\newcommand{\T}{\mathrm{T}}
+
+\graphicspath{{./fig/}{./fig/Fig1/}{./fig/Fig2/}{./fig/Fig3/}{./fig/Fig4/}{./}{../}{../../}}
+
+\title{Tensor-based approach for subspace factorisation of the latent spaces of StyleGAN }
+
+\author{
+Haas, Rene\\
+\texttt{renha@itu.dk}
+\and
+Graßhof, Stella \\
+\texttt{stgr@itu.dk}
+\and
+Brandt, Sami S.\\
+\texttt{sambr@itu.dk}
+}
 
 \begin{document}
-
-\maketitleabstract
-
+\maketitle
+\input{sec/abstract}
 \input{sec/introduction}
-\input{sec/related-work}
-\input{sec/data}
-\input{sec/baselines}
-\input{sec/our-approach}
-\input{sec/results}
-
-\input{sec/analysis}
-\input{sec/conclusion}
-
-
-
-\section{References}
-\label{main:ref}
-
-\bibliographystyle{lrec}
-\bibliography{references}
-
-
+\input{sec/method} 
+\input{sec/results}    
+\input{sec/conclusion} 
+\bibliography{references.bib} 
+\bibliographystyle{plain}
 \end{document}
