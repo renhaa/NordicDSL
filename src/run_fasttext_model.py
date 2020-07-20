@@ -4,9 +4,9 @@ import pandas as pd
 import fasttext
 import glob
 
+
 class FastTextModel:
     def __init__(self, model_path):
-
         self.model = fasttext.load_model(model_path)
 
     def predict(self,sentece):
