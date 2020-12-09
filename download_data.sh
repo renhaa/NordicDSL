@@ -6,8 +6,8 @@ wget -c http://www.derczynski.com/resources/nordicdsl/dk.txt -O ../data/raw_data
 wget -c http://www.derczynski.com/resources/nordicdsl/nb.txt -O ../data/raw_data/wikipedia/nb.txt
 
 #CoNLL17 https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-1989
-echo "DOWNLOADING CoNLL17 data:"
-curl --remote-name-all https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-1989{/Danish-annotated-conll17.tar,/Norwegian-Bokmaal-annotated-conll17.tar}
+# echo "DOWNLOADING CoNLL17 data:"
+# curl --remote-name-all https://lindat.mff.cuni.cz/repository/xmlui/bitstream/handle/11234/1-1989{/Danish-annotated-conll17.tar,/Norwegian-Bokmaal-annotated-conll17.tar}
 
 # Other options for CoNLL17:
 # /Norwegian-Nynorsk-annotated-conll17.tar,/Old_Church_Slavonic-annotated-conll17.tar,
