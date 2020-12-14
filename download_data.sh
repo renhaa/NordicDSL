@@ -4,6 +4,10 @@ echo "DOWNLOADING small wiki test set :"
 mkdir -p ../data/raw_data/wikipedia/
 wget -c http://www.derczynski.com/resources/nordicdsl/dk.txt -O ../data/raw_data/wikipedia/dk.txt
 wget -c http://www.derczynski.com/resources/nordicdsl/nb.txt -O ../data/raw_data/wikipedia/nb.txt
+wget -c http://www.derczynski.com/resources/nordicdsl/fo.txt -O ../data/raw_data/wikipedia/fo.txt
+wget -c http://www.derczynski.com/resources/nordicdsl/is.txt -O ../data/raw_data/wikipedia/is.txt
+wget -c http://www.derczynski.com/resources/nordicdsl/nn.txt -O ../data/raw_data/wikipedia/nn.txt
+wget -c http://www.derczynski.com/resources/nordicdsl/sv.txt -O ../data/raw_data/wikipedia/sv.txt
 
 #CoNLL17 https://lindat.mff.cuni.cz/repository/xmlui/handle/11234/1-1989
 # echo "DOWNLOADING CoNLL17 data:"
