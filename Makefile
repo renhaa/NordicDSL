@@ -7,7 +7,7 @@ download_data:
 	sh download_data.sh
 
 preprocess:
-	python3 preprocess.py ../data/raw_data/wikipedia/ data/wikipedia/
+	python3 preprocess.py data/raw_data/wikipedia/ data/wikipedia/
 
 train_fasttest_supervised: 
 	python3 train_fasttext_supervised.py data/wikipedia/ 
