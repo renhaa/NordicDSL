@@ -9,3 +9,14 @@ To install requirements, download preproces the data and finally train a FastTex
 
 ## Data and pretrained model
 The dataset and a pretrained fasttext model can be downloaded from:  http://itu.dk/people/renha/NordicDSL/
+
+# License 
+
+## Dataset
+
+<a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/3.0/88x31.png" /></a>
+<br />The wikipedia dataset is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/3.0/">Creative Commons Attribution-ShareAlike 3.0 Unported License</a>.
+
+
+## Fasttext
+Facebook's FastText is licensed under a [MIT License](https://github.com/facebookresearch/fastText/blob/master/LICENSE)
