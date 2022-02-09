@@ -10,6 +10,28 @@ To install requirements, download preproces the data and finally train a FastTex
 ## Data and pretrained model
 The dataset and a pretrained fasttext model can be downloaded from:  http://itu.dk/people/renha/NordicDSL/
 
+# Referring to this tool
+
+If you use this tool, please cite the relevant paper, [Discriminating Between Similar Nordic Languages](https://aclanthology.org/2021.vardial-1.8/):
+
+> Haas & Derczynski, 2021. "Discriminating Between Similar Nordic Languages". In Proceedings of the Eighth Workshop on NLP for Similar Languages, Varieties and Dialects
+
+```
+@inproceedings{haas-derczynski-2021-discriminating,
+    title = "Discriminating Between Similar Nordic Languages",
+    author = "Haas, Ren{\'e}  and
+      Derczynski, Leon",
+    booktitle = "Proceedings of the Eighth Workshop on NLP for Similar Languages, Varieties and Dialects",
+    month = apr,
+    year = "2021",
+    address = "Kiyv, Ukraine",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2021.vardial-1.8",
+    pages = "67--75",
+    abstract = "Automatic language identification is a challenging problem. Discriminating between closely related languages is especially difficult. This paper presents a machine learning approach for automatic language identification for the Nordic languages, which often suffer miscategorisation by existing state-of-the-art tools. Concretely we will focus on discrimination between six Nordic languages: Danish, Swedish, Norwegian (Nynorsk), Norwegian (Bokm{\aa}l), Faroese and Icelandic.",
+}
+```
+
 # License 
 
 ## Dataset
